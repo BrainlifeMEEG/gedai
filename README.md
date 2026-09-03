@@ -28,7 +28,7 @@ on Leadfield Filtering.* bioRxiv 2025. doi:10.1101/2025.10.04.680449
 
 ## Inputs
 
-- **mne** (`neuro/mne`): a continuous raw `.fif` file. Must contain EEG channels.
+- **mne** (`neuro/meeg/mne/raw`): a continuous raw `.fif` file. Must contain EEG channels.
 
 For best results the EEG channels should either carry **standard 10-05 names**
 (`Fp1`, `Fz`, `Cz`, ...) or have **digitised positions**, and the data should be
@@ -36,8 +36,8 @@ For best results the EEG channels should either carry **standard 10-05 names**
 
 ## Outputs
 
-- **out_dir/raw.fif** (`neuro/mne`): the denoised data.
-- **out_dir/noise_raw.fif** (`neuro/mne`): the *removed* signal (EEG channels
+- **out_dir/raw.fif** (`neuro/meeg/mne/raw`): the denoised data.
+- **out_noise/raw.fif** (`neuro/meeg/mne/raw`): the *removed* signal (EEG channels
   only) -- `input EEG = denoised EEG + noise`.
 - **out_report/report.html**: QC report (SENSAI fit, subspace similarity, PSD
   before/after, ENOVA topomap, time-domain segment).

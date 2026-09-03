@@ -67,7 +67,7 @@ n_jobs : int
 Outputs
 -------
 out_dir/raw.fif : denoised data (datatype neuro/mne).
-out_dir/noise_raw.fif : the removed signal, EEG only (datatype neuro/mne).
+out_noise/raw.fif : the removed signal, EEG only (datatype neuro/mne).
 out_report/report.html : QC report.
 out_figs/*.png : QC figures.
 product.json : brainlife metadata.
@@ -105,7 +105,7 @@ from brainlife_utils import (
 mne.set_log_level('WARNING')
 setup_matplotlib_backend()
 
-ensure_output_dirs('out_dir', 'out_figs', 'out_report')
+ensure_output_dirs('out_dir', 'out_noise', 'out_figs', 'out_report')
 config = load_config()
 require_config_keys(config, ['mne'])
 product_items = []
@@ -533,7 +533,7 @@ print(f"Wrote and verified {out_raw}")
 # ======================================================================
 noise_raw = raw_eeg_in.copy()
 noise_raw._data = noise_arr
-out_noise = os.path.join('out_dir', 'noise_raw.fif')
+out_noise = os.path.join('out_noise', 'raw.fif')
 noise_raw.save(out_noise, overwrite=True)
 _ = mne.io.read_raw_fif(out_noise, preload=False)
 print(f"Wrote and verified {out_noise}")
