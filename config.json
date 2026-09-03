@@ -1,0 +1,19 @@
+{
+    "mne": "/network/iss/cenir/analyse/meeg/BRAINLIFE/datasets/dummy_lpf-raw.fif",
+    "mode": "adaptive",
+    "l_freq": 0.5,
+    "noise_multiplier": 3.0,
+    "sensai_method": "optimize",
+    "duration": 2.0,
+    "overlap": 0.5,
+    "reject_by_annotation": false,
+    "broadband_pass": true,
+    "wavelet_low_cutoff": "auto",
+    "cycles_per_wavelet": 10,
+    "add_reference_channel": "",
+    "montage": "",
+    "montage_handling": "auto",
+    "interpolate_bads": false,
+    "output": "recombine",
+    "n_jobs": 8
+}
