@@ -547,17 +547,17 @@ if enova_ch is not None:
 try:
     seg = min(10.0, raw_eeg_in.times[-1])
     t0 = max(0.0, raw_eeg_in.times[-1] / 2.0 - seg / 2.0)
-    picks_plot = list(range(min(8, len(denoised_eeg.ch_names))))
+    picks_plot = list(range(min(6, len(denoised_eeg.ch_names))))
     sfreq = raw_eeg_in.info['sfreq']
     s0, s1 = int(t0 * sfreq), int((t0 + seg) * sfreq)
     tvec = raw_eeg_in.times[s0:s1]
     din = raw_eeg_in.get_data()[picks_plot, s0:s1]
     dout = denoised_eeg.get_data()[picks_plot, s0:s1]
-    off = 4 * np.median(np.abs(din)) if np.median(np.abs(din)) > 0 else 1e-5
-    fig, ax = plt.subplots(figsize=(9, 6))
+    off = 8 * np.std(din) if np.std(din) > 0 else 1e-5
+    fig, ax = plt.subplots(figsize=(9, 7))
     for k, pk in enumerate(picks_plot):
-        ax.plot(tvec, din[k] - k * off, color='0.6', lw=0.5)
-        ax.plot(tvec, dout[k] - k * off, color='tab:blue', lw=0.5)
+        ax.plot(tvec, din[k] - k * off, color='0.6', lw=0.6)
+        ax.plot(tvec, dout[k] - k * off, color='tab:blue', lw=0.6)
     ax.set(xlabel='Time (s)', yticks=[-k * off for k in range(len(picks_plot))],
            yticklabels=[denoised_eeg.ch_names[p] for p in picks_plot],
            title=f'Input (grey) vs denoised (blue) -- {seg:.0f}s segment')
