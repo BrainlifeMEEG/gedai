@@ -124,7 +124,7 @@ NOISE_PRESETS = (
 
 errors = []
 
-mode = str(config.get('mode') or 'adaptive').lower()
+mode = str(config.get('mode') or 'broadband').lower()
 if mode not in MODES:
     errors.append(f"mode must be one of {MODES}, got '{mode}'")
 
@@ -208,9 +208,25 @@ else:
     except (TypeError, ValueError):
         errors.append(f"wavelet_low_cutoff must be a number, 'auto' or null, got '{config.get('wavelet_low_cutoff')}'")
 
-reject_by_annotation = bool(config.get('reject_by_annotation', False))
-broadband_pass = bool(config.get('broadband_pass', True))
-interpolate_bads = bool(config.get('interpolate_bads', False))
+# booleans: accept real JSON bools and common string spellings
+BOOL_MAP = {True: True, False: False, None: None,
+            'true': True, '1': True, 'yes': True, 'on': True,
+            'false': False, '0': False, 'no': False, 'off': False, 'none': False}
+bools = {}
+for _key, _default in (('reject_by_annotation', False),
+                       ('broadband_pass', True),
+                       ('interpolate_bads', False)):
+    _raw = config.get(_key)
+    _norm = BOOL_MAP.get(_raw if isinstance(_raw, bool) or _raw is None
+                         else str(_raw).strip().lower(), 'INVALID')
+    if _norm == 'INVALID':
+        errors.append(f"{_key} must be a boolean, got '{_raw}'")
+        bools[_key] = _default
+    else:
+        bools[_key] = _default if _norm is None else _norm
+reject_by_annotation = bools['reject_by_annotation']
+broadband_pass = bools['broadband_pass']
+interpolate_bads = bools['interpolate_bads']
 
 add_reference_channel = config.get('add_reference_channel') or None
 if add_reference_channel is not None:
@@ -255,7 +271,13 @@ add_info_to_product(product_items, f"gedai version {gedai.__version__}")
 # ======================================================================
 # LOAD DATA, SPLIT CHANNELS
 # ======================================================================
-raw = mne.io.read_raw_fif(config['mne'], preload=True)
+try:
+    raw = mne.io.read_raw_fif(config['mne'], preload=True)
+except Exception as e:
+    add_info_to_product(
+        product_items, f"Could not read input file '{config['mne']}': {e}", 'error')
+    create_product_json(product_items)
+    sys.exit(1)
 
 eeg_picks = mne.pick_types(raw.info, eeg=True, meg=False, eog=False, ecg=False,
                            stim=False, misc=False, exclude=[])

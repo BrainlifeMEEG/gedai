@@ -50,7 +50,7 @@ For best results the EEG channels should either carry **standard 10-05 names**
 
 | key | type | default | description |
 |---|---|---|---|
-| `mode` | `broadband` \| `multiband` \| `adaptive` | `adaptive` | GEDAI variant. `adaptive` is the authors' recommended offline pipeline (slowest); `broadband` is the fastest. |
+| `mode` | `broadband` \| `multiband` \| `adaptive` | `broadband` | GEDAI variant. `broadband` = single fast pass. `multiband` = per wavelet band. `adaptive` = `AdaptiveMultibandGedai`, the authors' recommended offline pipeline -- highest quality but **substantially slower** (can be tens of minutes on long / high-sampling-rate recordings). |
 | `l_freq` | float \| null | `0.5` | High-pass (Hz) applied before fitting. Improves covariance estimation. `null` disables it. |
 | `noise_multiplier` | float \| str | `3.0` | SENSAI noise weighting. Higher = keep more brain signal. A number > 0, or `standard` (3.0) / `aggressive` (1.5) / `conservative` (6.0). |
 | `sensai_method` | `optimize` \| `gridsearch` | `optimize` | Threshold search strategy. |
@@ -72,10 +72,13 @@ For best results the EEG channels should either carry **standard 10-05 names**
 - **EEG only.** MEG denoising is not supported (the bundled leadfield is an EEG
   leadfield). MEG channels are passed through unchanged.
 - Needs standard 10-05 channel names **or** channel positions **or** a `montage`.
-- `mode: adaptive` is unavailable for epoched data -- use the `gedai-epo` app
-  with `mode: multiband`.
+- `mode: adaptive` is unavailable for epoched data -- use the `gedai-epo` app.
+- `mode: adaptive` can be slow (broadband pre-pass + one SENSAI optimisation per
+  wavelet band). Prefer `broadband` for a first pass / large batches.
 - The denoised EEG output is average-referenced.
-- `mode: broadband` does not produce the SENSAI subspace-similarity figure.
+- `mode: broadband` does not produce the SENSAI subspace-similarity figure
+  (a GEDAI limitation: those metrics are only populated for the multiband /
+  adaptive models).
 
 ## Local testing
 

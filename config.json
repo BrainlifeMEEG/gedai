@@ -1,6 +1,6 @@
 {
     "mne": "/network/iss/cenir/analyse/meeg/BRAINLIFE/datasets/dummy_lpf-raw.fif",
-    "mode": "adaptive",
+    "mode": "broadband",
     "l_freq": 0.5,
     "noise_multiplier": 3.0,
     "sensai_method": "optimize",
