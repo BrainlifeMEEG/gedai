@@ -1,5 +1,61 @@
 # GEDAI -- unsupervised EEG denoising (continuous data)
 
+<!-- brainlife-app:begin (generated from the App manifest; edit the manifest, not this block) -->
+
+> **Unsupervised EEG denoising of continuous data by leadfield filtering (GEDAI; Ros et al. 2025). Non-commercial licence -- see the app README.**
+
+Runs GEDAI (gedai 0.4.2, installed at run time) on the EEG channels of a continuous MNE raw file: segment covariances are contrasted with a template leadfield covariance and non-brain components are removed with a threshold chosen automatically by SENSAI, in broadband, multiband or adaptive mode. Non-EEG channels pass through unchanged; the removed signal is saved separately and an HTML QC report is produced. EEG channels need standard 10-05 names or digitised positions, and the output is average-referenced. GEDAI is licensed for non-commercial use only.
+
+| | |
+|---|---|
+| 📥 **Inputs** | `neuro/meeg/mne/raw` |
+| 📤 **Outputs** | `neuro/meeg/mne/raw` ×2 |
+| 🐳 **Container** | `brainlifemeeg/mne-fsaverage:1.12.1` |
+| ⚙️ **Resources** | 8 CPUs · 24 GB memory · 4 h walltime |
+| 🔗 **Run it** | [doi.org/10.25663/brainlife.app.959](https://doi.org/10.25663/brainlife.app.959) |
+
+#### 📥 Inputs
+
+| Input | Datatype | Required | Description |
+|---|---|---|---|
+| `mne` | `neuro/meeg/mne/raw` | yes | Continuous raw .fif with EEG channels |
+
+#### 📤 Outputs
+
+| Output | Datatype | Description |
+|---|---|---|
+| `out_dir` | `neuro/meeg/mne/raw` | Denoised data |
+| `out_noise` | `neuro/meeg/mne/raw` | The signal GEDAI removed (EEG channels only) |
+
+<details>
+<summary><b>⚙️ Parameters</b> (16)</summary>
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `mode` | enum | `broadband` | GEDAI variant. Options: `broadband`, `multiband`, `adaptive`. |
+| `l_freq` | number | `0.5` | High-pass (Hz) before fitting. Empty/null disables it. |
+| `noise_multiplier` | string | `3.0` | SENSAI noise weighting -- higher keeps more brain signal. A number > 0, or a preset: standard / auto (3.0), aggressive (1.5), conservative (6.0). |
+| `sensai_method` | enum | `optimize` | SENSAI threshold search strategy. Options: `optimize`, `gridsearch`. |
+| `duration` | number | `2` | broadband / multiband: segment length (s) for covariance estimation. |
+| `overlap` | number | `0.5` | Fractional segment overlap, in [0, 1). |
+| `reject_by_annotation` | boolean | `false` | Exclude 'bad'-annotated spans from the fit (GEDAI recommends keeping them). |
+| `broadband_pass` | boolean | `true` | multiband / adaptive: run an initial broadband GEDAI pre-pass. |
+| `cycles_per_wavelet` | number | `10` | adaptive only: wavelet cycles per band. |
+| `wavelet_low_cutoff` | string | `auto` | multiband / adaptive: wavelet bands below this (Hz) are zeroed. 'auto' uses the data high-pass. |
+| `add_reference_channel` | string |  | Name of a flat reference channel to add before fitting (preserves rank for non-average references). Kept in the output. |
+| `montage` | string |  | Name of an MNE built-in montage to attach before fitting (e.g. standard_1005, GSN-HydroCel-257). Needed when channel names are non-standard and no positions are stored. |
+| `montage_handling` | enum | `auto` | How GEDAI's reference covariance is built. Options: `auto`, `leadfield`, `forward`, `channel_positions`, `drop_unmatched`. |
+| `interpolate_bads` | boolean | `false` | Interpolate channels marked bad before fitting. |
+| `output` | enum | `recombine` | What to write as the denoised output. Options: `recombine`, `eeg_only`. |
+| `n_jobs` | number | `8` | Parallel jobs; match the allocated CPUs (currently 8). |
+
+</details>
+
+📚 **References used by this App:**
+- Ros T, Ferat V, Huang Y, Colangelo C, Kia SM, Wolfers T, Vulliemoz S, Michela A. Return of the GEDAI: Unsupervised EEG Denoising based on Leadfield Filtering. bioRxiv (2025). [doi:10.1101/2025.10.04.680449](https://doi.org/10.1101/2025.10.04.680449)
+
+<!-- brainlife-app:end -->
+
 > ⚠️ **Licence / patent notice.** This app wraps
 > [GEDAI](https://github.com/neurotuning/gedai), which is licensed under the
 > **PolyForm Noncommercial License 1.0.0** and whose core algorithm is
